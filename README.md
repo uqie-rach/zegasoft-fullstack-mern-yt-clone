@@ -50,7 +50,6 @@ Server side:
 |3.| Models (auth, conversation, message) | Hanif|✅/🔃/❌|
 |4.| Token | Hanif|✅/🔃/❌|
 |5.| Error Handling | Uqie|✅/🔃/❌|
-|6.| MongoAtlas config & db connection | Hanif|✅/🔃/❌|
 
 
 **Feat** 🛢️
