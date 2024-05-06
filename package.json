@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "type": "module",
   "main": "server.js",
-  "devDependencies": {},
   "scripts": {
-    "server": "node --watch --env-file=backend/.env backend/server.js"
+    "server": "node --watch --env-file=backend/.env backend/server.js", 
+    "start": "nodemon --watch --exec babel-node --env-file=backend/.env backend/server.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -19,5 +19,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
 }

@@ -1,4 +1,4 @@
-# Chat App
+# Youtube clone
 
 ## Description
 
@@ -7,14 +7,21 @@
 Client side:
 
 - [React JS](https://react.dev/)
+- [Redux]()
 
 Server side:
 
 - [Express](https://expressjs.com/)
-- [Socket.io](https://socket.io/)
 - [MongoDB](https://www.mongodb.com/)
+- [bcryptjs]()
+- [cookie-parser]()
+- [dotenv]()
+- [jsonwebtoken]()
+- [mongoose]()
+- [nodemon]()
 
 ### Structure
+
 - Backend/
   - Config/
   - Controllers/
@@ -23,22 +30,23 @@ Server side:
   - Routes/
   - Utils/
   - server.js
-  
-***Notes***:
- - Menghilangkan Database/ & Socket/
- - socket.js & database.js masuk ke folder Config/
 
+**_Notes_**:
+
+- error.js masuk ke Config/
+- verifyToken.js masuk ke Utils/
+- tambahan folder Middlewares/ , Config/ , dan Utils/
 
 ### Tasks
 
 **Alur Sesuai Video**
 
-*Note*: 
+_Note_:
+
 - ✅ : Done
 - 🔃 : Ongoing (opsional)
 - ❌ : Not started
-- Tiap  baris dibuat 1 commit
-
+- Tiap baris dibuat 1 commit
 
 **Chore** ⚒️
 
@@ -46,18 +54,17 @@ Server side:
 |No. | Name | Assigned to | Status|
 |-----|-----|:-----:|:-----:|
 |1.| Initial setup (dependecies, run script) | Uqie|✅|
-|2.| MongoAtlas config & db connection | Uqie|✅/🔃/❌|
-|3.| Models (auth, conversation, message) | Hanif|✅/🔃/❌|
-|4.| Token | Hanif|✅/🔃/❌|
+|2.| MongoAtlas config| Uqie|✅/🔃/❌|
+|3.| Models (users, comment, video) | Hanif|✅/🔃/❌|
+|4.| Verify Token | Hanif|✅/🔃/❌|
 |5.| Error Handling | Uqie|✅/🔃/❌|
-
 
 **Feat** 🛢️
 
 [*Fitur-fitur project*]
 |No. | Name | Assigned to | Status|
 |-----|-----|-----|:-----:|
-|1.| Auth Controller & Routes| Uqie|✅/🔃/❌|
-|2.| Conversation Controller & Routes| Hanif|✅/🔃/❌|
-|3.| Message Controller & Routes| Uqie|✅/🔃/❌|
-
+|1.| Auth Controller & Routes| uqie|✅/🔃/❌|
+|2.| Users Controller & Routes| uqie|✅/🔃/❌|
+|3.| Comment Controller & Routes| hanif |✅/🔃/❌|
+|4.| Video Controller & Routes| hanif|✅/🔃/❌|
