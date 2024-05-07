@@ -57,7 +57,7 @@ _Note_:
 |2.| MongoAtlas config| Uqie|✅|
 |3.| Models (users, comment, video) | Uqie|✅|
 |4.| Verify Token | Hanif|✅/🔃/❌|
-|5.| Error Handling | Uqie|✅/🔃/❌|
+|5.| Error Handling | Uqie|✅|
 
 **Feat** 🛢️
 
