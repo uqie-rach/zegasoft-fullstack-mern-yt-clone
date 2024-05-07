@@ -54,8 +54,8 @@ _Note_:
 |No. | Name | Assigned to | Status|
 |-----|-----|:-----:|:-----:|
 |1.| Initial setup (dependecies, run script) | Uqie|✅|
-|2.| MongoAtlas config| Uqie|✅/🔃/❌|
-|3.| Models (users, comment, video) | Hanif|✅/🔃/❌|
+|2.| MongoAtlas config| Uqie|✅|
+|3.| Models (users, comment, video) | Uqie|✅|
 |4.| Verify Token | Hanif|✅/🔃/❌|
 |5.| Error Handling | Uqie|✅/🔃/❌|
 
