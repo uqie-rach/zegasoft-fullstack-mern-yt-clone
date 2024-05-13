@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import { connectToDb } from "./Config/database.js";
 import { UserRouter } from "./Routes/userRoute.js";
 import { AuthRouter } from "./Routes/authRoute.js";
+import { VideoRouter } from "./Routes/videoRoute.js";
 
 const server = express();
 const PORT = process.env.PORT;
@@ -30,6 +31,7 @@ server.get("/", async (req, res, next) => {
 // Routes
 server.use("/api/auth", AuthRouter);
 server.use("/api/users", UserRouter);
+server.use("/api/videos", VideoRouter);
 
 // Place routes above this middleware
 // Error handler
