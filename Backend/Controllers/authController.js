@@ -3,6 +3,7 @@ import User from "../Models/User.js";
 import { ResponseError } from "../Config/error.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import generateTokenAndSetCookie from "../Utils/generateToken.js";
 
 /**
  *
@@ -11,17 +12,17 @@ import jwt from "jsonwebtoken";
  */
 const signup = async (req, res, next) => {
   try {
-    const body = req.body;
+    const { name, email, password } = req.body;
     const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(body.password, salt);
+    const hash = bcrypt.hashSync(password, salt);
 
     const isUserExist = await User.findOne({
-      $or: [{ email: body.email }, { name: body.name }],
+      $or: [{ email }, { name }],
     });
 
     if (isUserExist) throw new ResponseError("Cannot use credentials", 400);
 
-    const newUser = new User({ ...body, password: hash });
+    const newUser = new User({ name, email, password: hash });
     await newUser.save();
 
     res.status(201).json({ message: "User has been created!" });
@@ -37,30 +38,24 @@ const signup = async (req, res, next) => {
  */
 const signin = async (req, res, next) => {
   try {
-    const body = req.body;
+    const { email, name, password } = req.body;
     const user = await User.findOne({
-      $or: [{ email: body.email }, { name: body.name }],
+      $or: [{ email }, { name }],
     });
 
     if (!user) throw new ResponseError("User not found", 404);
 
-    const { password, ...rest } = user.toObject();
-    const hashedPasswd = bcrypt.compareSync(body.password, password);
+    const { password: hashedPassword, ...rest } = user.toObject();
+    const isPasswordValid = bcrypt.compareSync(password, hashedPassword);
 
-    if (!hashedPasswd) throw new ResponseError("Wrong credentials", 401);
+    if (!isPasswordValid) throw new ResponseError("Wrong credentials", 401);
 
-    // JWT token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+    generateTokenAndSetCookie(user._id, res);
 
-    res
-      .cookie("access_token", token, {
-        httpOnly: true,
-      })
-      .status(200)
-      .json({
-        message: "Successfully logged in!",
-        data: rest,
-      });
+    res.status(200).json({
+      message: "Successfully logged in!",
+      data: rest,
+    });
   } catch (error) {
     next(error);
   }
@@ -74,7 +69,7 @@ const signin = async (req, res, next) => {
 const logout = async (req, res, next) => {
   try {
     res
-      .clearCookie("access_token")
+      .clearCookie("jwt")
       .status(200)
       .json({ message: "Logged out!" });
   } catch (error) {
