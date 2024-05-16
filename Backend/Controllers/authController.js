@@ -57,10 +57,44 @@ const signin = async (req, res, next) => {
         httpOnly: true,
       })
       .status(200)
-      .json({
-        message: "Successfully logged in!",
-        data: rest,
+      .json(rest);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ *
+ * @param {request} req
+ * @param {response} res
+ */
+const googleSignin = async (req, res, next) => {
+  try {
+    const email = req.body.email;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      const newUser = new User({
+        ...req.body,
+        fromGoogle: true,
       });
+
+      const savedUser = await newUser.save();
+      const token = jwt.sign({ id: savedUser._id }, process.env.JWT_SECRET);
+      res.cookie("access_token", token, { httpOnly: true }).status(200).json(savedUser.toObject());
+      return;
+    }
+
+    // JWT token
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+
+    res
+      .cookie("access_token", token, {
+        httpOnly: true,
+      })
+      .status(200)
+      .json(user.toObject());
   } catch (error) {
     next(error);
   }
@@ -82,4 +116,4 @@ const logout = async (req, res, next) => {
   }
 };
 
-export default { signup, signin, logout };
+export default { signup, signin, logout, googleSignin };

@@ -11,7 +11,7 @@ const getVideos = async (req, res, next) => {
   try {
     const videos = await Video.find();
 
-    res.status(200).json({ message: "OK", data: videos });
+    res.status(200).json(videos);
   } catch (err) {
     next(err);
   }
@@ -122,7 +122,7 @@ const getVideoById = async (req, res, next) => {
 
     if (!video) throw new ResponseError("Video not found", 404);
 
-    res.status(200).json({ message: "OK", data: video });
+    res.status(200).json(video);
   } catch (err) {
     next(err);
   }
@@ -162,7 +162,7 @@ const trend = async (req, res, next) => {
  */
 const random = async (req, res, next) => {
   try {
-    const videos = await Video.aggregate([{ $sample: { size: 2 } }]);
+    const videos = await Video.aggregate([{ $sample: { size: 40 } }]);
     res.status(200).json(videos);
   } catch (err) {
     next(err);
@@ -184,7 +184,9 @@ const sub = async (req, res, next) => {
       })
     );
 
-    res.status(200).json(videos);
+    const uniqueVideos = Array.from(new Set(videos.flat()));
+
+    res.status(200).json(uniqueVideos.sort((a, b) => b.createdAt - a.createdAt));
   } catch (err) {
     next(err);
   }

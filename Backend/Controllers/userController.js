@@ -2,6 +2,7 @@ import { request, response } from "express";
 import User from "../Models/User.js";
 import { ResponseError } from "../Config/error.js";
 import Video from "../Models/Video.js";
+import mongoose from "mongoose";
 
 /**
  *
@@ -28,7 +29,10 @@ const getUsers = async (req, res, next) => {
  */
 const getUserById = async (req, res, next) => {
   try {
-    const user = await User.findById(req.params.id);
+    if (!req.params.id) {
+      throw new ResponseError("User not found", 404);
+    }
+    const user = await User.findById(req.params.id, { password: false });
 
     if (!user) throw new ResponseError("User not found", 404);
 
@@ -69,27 +73,45 @@ const update = async (req, res, next) => {
  * @param {response} res
  */
 const subscribe = async (req, res, next) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
+    const opts = { session };
+
     // Check if the user is already subscribed
     const isSubscribed = await User.findOne({
       $and: [{ _id: req.user.id }, { subscribedUsers: req.params.id }],
-    });
+    }).session(session);
 
     if (isSubscribed)
       throw new ResponseError("User is already subscribed", 400);
 
     // Update the user's subscribedUsers array
-    await User.findByIdAndUpdate(req.user.id, {
-      $push: { subscribedUsers: req.params.id },
-    });
+    await User.findByIdAndUpdate(
+      req.user.id,
+      {
+        $push: { subscribedUsers: req.params.id },
+      },
+      opts
+    );
 
     // Update the user's subscriber count
-    await User.findByIdAndUpdate(req.params.id, {
-      $inc: { subscriber: 1 },
-    });
+    await User.findByIdAndUpdate(
+      req.params.id,
+      {
+        $inc: { subscriber: 1 },
+      },
+      opts
+    );
+
+    await session.commitTransaction();
+    session.endSession();
 
     res.status(200).json({ message: "Subscribed successfully" });
   } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
     next(err);
   }
 };
@@ -134,11 +156,10 @@ const like = async (req, res, next) => {
   const videoId = req.params.videoId;
 
   try {
-    const likes = await Video.findByIdAndUpdate(videoId, {
+    await Video.findByIdAndUpdate(videoId, {
       $addToSet: { likes: userId },
       $pull: { dislikes: userId },
     });
-    console.info(likes);
 
     res.status(200).json({ message: "Liked" });
   } catch (err) {
@@ -160,9 +181,6 @@ const dislike = async (req, res, next) => {
       $addToSet: { dislikes: userId },
       $pull: { likes: userId },
     });
-
-    const fetchVideo = await Video.findById(videoId);
-    console.log(fetchVideo);
 
     res.status(200).json({ message: "disliked" });
   } catch (err) {
