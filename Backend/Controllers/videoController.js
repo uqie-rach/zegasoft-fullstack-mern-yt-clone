@@ -42,7 +42,7 @@ const postVideo = async (req, res, next) => {
     const newVideo = new Video({ userId: userId, ...req.body });
 
     newVideo.save();
-    res.status(201).json({ message: "Uploaded Successfully" });
+    res.status(201).json(newVideo.toObject());
   } catch (err) {
     next(err);
   }
