@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
@@ -8,6 +8,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import Upload from "./Upload";
 
 const Container = styled.div`
   position: sticky;
@@ -37,13 +38,15 @@ const Search = styled.div`
   padding: 5px;
   border: 1px solid #ccc;
   border-radius: 3px;
-`;
-
+  color: ${({ theme }) => theme.text};
+  `;
+  
 const Input = styled.input`
   border: none;
   background-color: transparent;
   outline: none;
   color: ${({ theme }) => theme.text};
+  font-family: inherit;
 `;
 
 const Button = styled.button`
@@ -78,43 +81,61 @@ const Navbar = () => {
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
 
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+
   const handleLogout = async (e) => {
     await axios.post("http://localhost:3000/api/auth/logout", null, {
       withCredentials: true,
     });
 
     navigate("/signin");
+    localStorage.removeItem("persist:root");
+    window.location.reload();
   };
 
   return (
-    <Container>
-      <Wrapper>
-        <Search>
-          <Input placeholder="Search" />
-          <SearchOutlinedIcon />
-        </Search>
-        {currentUser ? (
-          <User>
-            <Button
-              onClick={handleLogout}
-              style={{ textDecoration: "none", color: "inherit" }}
-            >
-              <LogoutIcon />
-            </Button>
-            <VideoCallOutlinedIcon />
-            <Avatar src={currentUser.img} />
-            {currentUser.name}
-          </User>
-        ) : (
-          <Link to="signin" style={{ textDecoration: "none" }}>
-            <Button>
-              <AccountCircleOutlinedIcon />
-              SIGN IN
-            </Button>
-          </Link>
-        )}{" "}
-      </Wrapper>
-    </Container>
+    <>
+      <Container>
+        <Wrapper>
+          <Search>
+            <Input
+              placeholder="Search"
+              onChange={(e) => setQuery(e.target.value)}
+            />
+            <SearchOutlinedIcon
+              onClick={() => navigate(`/search?title=${query}`)}
+            />
+          </Search>
+          {currentUser ? (
+            <User>
+              <Button
+                onClick={handleLogout}
+                style={{
+                  textDecoration: "none",
+                  color: "inherit",
+                  outline: "none",
+                  border: "none",
+                }}
+              >
+                <LogoutIcon />
+              </Button>
+              <VideoCallOutlinedIcon onClick={() => setOpen(true)} style={{ cursor: "pointer"}}/>
+              <Avatar src={currentUser.img} />
+              {currentUser.name}
+            </User>
+          ) : (
+            <Link to="signin" style={{ textDecoration: "none" }}>
+              <Button>
+                <AccountCircleOutlinedIcon />
+                SIGN IN
+              </Button>
+            </Link>
+          )}{" "}
+        </Wrapper>
+      </Container>
+      {open && <Upload setOpen={setOpen} />}
+    </>
   );
 };
 

@@ -7,6 +7,7 @@ import AddTaskOutlinedIcon from "@mui/icons-material/AddTaskOutlined";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 import Comments from "../components/Comments";
+
 import Card from "../components/Card";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
@@ -118,6 +119,11 @@ const Subscribe = styled.button`
   padding: 10px 20px;
   cursor: pointer;
 `;
+const VideoFrame = styled.video`
+  max-height: 720px;
+  width: 100%;
+  object-fit: cover;
+`;
 
 const Video = () => {
   const { currentUser } = useSelector((state) => state.user);
@@ -189,15 +195,7 @@ const Video = () => {
     <Container>
       <Content>
         <VideoWrapper>
-          {/* <iframe
-            width="100%"
-            height="720"
-            src="https://www.youtube.com/embed/k3Vfj-e1Ma4"
-            title="YouTube video player"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-          ></iframe> */}
+          <VideoFrame src={currentVideo?.videoUrl} controls />
         </VideoWrapper>
         <Title>{currentVideo?.title}</Title>
         <Details>

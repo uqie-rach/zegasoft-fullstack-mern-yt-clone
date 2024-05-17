@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import { auth, provider } from "../utils/firebase.js";
 import { signInWithPopup } from "firebase/auth";
 
+import GoogleIcon from "@mui/icons-material/Google.js";
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -102,13 +104,42 @@ const SignIn = () => {
   const handleSignUp = async (e) => {
     e.preventDefault();
 
-    const res = await axios.post(`http://localhost:3000/api/auth/signup`, {
-      name: username,
-      email: email,
-      password: password,
-    });
+    const fields = document.querySelectorAll(".signup-field");
+    const data = {};
 
-    console.log(res);
+    Array.from(fields).forEach((field) => (data[field.name] = field.value));
+
+    if (!data.password || !data.username || !data.email) {
+      alert("All fields are required!");
+      return;
+    }
+
+    if (!/\S+@\S+\.\S+/.test(data.email)) {
+      alert("Invalid email address");
+      return;
+    }
+
+    if (data.password.length < 5) {
+      alert("Password must have minimum 5 characters!");
+      return;
+    }
+
+    try {
+      const res = await axios.post(`http://localhost:3000/api/auth/signup`, {
+        name: data.username,
+        email: data.email,
+        password: data.password,
+      });
+
+      console.log(res.data);
+      Array.from(fields).forEach((field) => (field.value = ""));
+
+      alert(res.data.message);
+
+      window.location.reload();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleSignInWithGoogle = async (e) => {
@@ -150,19 +181,38 @@ const SignIn = () => {
         />
         <Button onClick={handleSignIn}>Sign in</Button>
         <Title>or</Title>
-        <Button onClick={handleSignInWithGoogle}>Sign in with Google</Button>
+        <Button
+          onClick={handleSignInWithGoogle}
+          style={{ display: "flex", alignItems: "center", gap: "10px" }}
+        >
+          <GoogleIcon />
+          Sign in with Google
+        </Button>
         <Title>or</Title>
-        <Input
-          placeholder="username"
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <Input placeholder="email" onChange={(e) => setEmail(e.target.value)} />
-        <Input
-          type="password"
-          placeholder="password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <Button onClick={handleSignUp}>Sign up</Button>
+        <form id="form">
+          <Input
+            className="signup-field"
+            name="username"
+            type="text"
+            placeholder="username"
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <Input
+            className="signup-field"
+            name="email"
+            type="email"
+            placeholder="email"
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <Input
+            className="signup-field"
+            name="password"
+            type="password"
+            placeholder="password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Button onClick={handleSignUp}>Sign up</Button>
+        </form>
       </Wrapper>
       <More>
         English(USA)

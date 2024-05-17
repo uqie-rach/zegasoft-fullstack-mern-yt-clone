@@ -71,27 +71,30 @@ const Card = ({ type, video }) => {
     }
   }, [video.userId]);
   return (
-    <Link to={`/video/${video._id}`} style={{ textDecoration: "none" }}>
-      <Container type={type}>
-        <Image
-          type={type}
-          src={
-            video.imgUrl &&
-            "https://i9.ytimg.com/vi_webp/k3Vfj-e1Ma4/mqdefault.webp?v=6277c159&sqp=CIjm8JUG&rs=AOn4CLDeKmf_vlMC1q9RBEZu-XQApzm6sA"
-          }
-        />
-        <Details type={type}>
-          <ChannelImage type={type} src={channel.name} />
-          <Texts>
-            <Title>{video.title}</Title>
-            <ChannelName>{channel.name}</ChannelName>
-            <Info>
-              {video.views} views • {format(video.createdAt)}
-            </Info>
-          </Texts>
-        </Details>
-      </Container>
-    </Link>
+    video &&
+    channel && (
+      <Link to={`/video/${video._id}`} style={{ textDecoration: "none" }}>
+        <Container type={type}>
+          <Image
+            type={type}
+            src={
+              video.imgUrl ||
+              "https://i9.ytimg.com/vi_webp/k3Vfj-e1Ma4/mqdefault.webp?v=6277c159&sqp=CIjm8JUG&rs=AOn4CLDeKmf_vlMC1q9RBEZu-XQApzm6sA"
+            }
+          />
+          <Details type={type}>
+            <ChannelImage type={type} src={channel.name} />
+            <Texts>
+              <Title>{video.title}</Title>
+              <ChannelName>{channel.name}</ChannelName>
+              <Info>
+                {video.views} views • {format(video.createdAt)}
+              </Info>
+            </Texts>
+          </Details>
+        </Container>
+      </Link>
+    )
   );
 };
 
